@@ -1,0 +1,59 @@
+---
+interface Props {
+	type?: 'note' | 'tip' | 'warning';
+	title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+const defaultTitle = { note: '说明', tip: '提示', warning: '注意' }[type];
+---
+
+<aside class:list={['callout', type]} aria-label={title ?? defaultTitle}>
+	<p class="callout-title">{title ?? defaultTitle}</p>
+	<div class="callout-content"><slot /></div>
+</aside>
+
+<style>
+	.callout {
+		margin: 1.75rem 0;
+		padding: 1rem 1.1rem;
+		border: 1px solid var(--callout-border);
+		border-left-width: 3px;
+		border-radius: 0.45rem;
+		background: var(--callout-bg);
+	}
+
+	.callout-title {
+		margin: 0 0 0.3rem;
+		color: var(--callout-text);
+		font-size: 0.88rem;
+		font-weight: 650;
+		letter-spacing: 0.04em;
+	}
+
+	.callout-content :global(> :first-child) {
+		margin-top: 0;
+	}
+
+	.callout-content :global(> :last-child) {
+		margin-bottom: 0;
+	}
+
+	.note {
+		--callout-bg: var(--blue-soft);
+		--callout-border: var(--blue-border);
+		--callout-text: var(--accent-strong);
+	}
+
+	.tip {
+		--callout-bg: var(--green-soft);
+		--callout-border: var(--green-border);
+		--callout-text: var(--green-text);
+	}
+
+	.warning {
+		--callout-bg: var(--amber-soft);
+		--callout-border: var(--amber-border);
+		--callout-text: var(--amber-text);
+	}
+</style>

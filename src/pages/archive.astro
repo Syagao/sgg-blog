@@ -1,0 +1,50 @@
+---
+import FormattedDate from '../components/FormattedDate.astro';
+import PageLayout from '../layouts/PageLayout.astro';
+import { getPublishedPosts, getReadingTime } from '../utils/blog';
+
+const posts = await getPublishedPosts();
+const postsByYear = posts.reduce<Record<string, typeof posts>>((groups, post) => {
+	const year = String(post.data.pubDate.getFullYear());
+	(groups[year] ??= []).push(post);
+	return groups;
+}, {});
+---
+
+<PageLayout title="归档" description="沈高高的博客文章时间归档。">
+	<div class="page-container">
+		<header class="page-header">
+			<p class="page-eyebrow">Archive</p>
+			<h1 class="page-title">归档</h1>
+			<p class="page-description">共 {posts.length} 篇文章，按发布时间整理。</p>
+		</header>
+
+		<div class="archive-list">
+			{Object.entries(postsByYear).map(([year, yearPosts]) => (
+				<section class="archive-year" aria-labelledby={`year-${year}`}>
+					<h2 id={`year-${year}`}>{year}</h2>
+					<ul>
+						{yearPosts.map((post) => (
+							<li>
+								<div class="archive-date"><FormattedDate date={post.data.pubDate} showYear={false} /></div>
+								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								<span>{getReadingTime(post.body)} 分钟</span>
+							</li>
+						))}
+					</ul>
+				</section>
+			))}
+		</div>
+	</div>
+</PageLayout>
+
+<style>
+	.archive-year { display: grid; grid-template-columns: 5rem 1fr; gap: 2rem; padding: 2rem 0 3rem; border-top: 1px solid var(--border); }
+	.archive-year h2 { margin: 0; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+	.archive-year ul { margin: 0; padding: 0; list-style: none; }
+	.archive-year li { display: grid; grid-template-columns: 5.5rem 1fr auto; gap: 1rem; align-items: baseline; padding: 0.65rem 0; }
+	.archive-date, .archive-year li > span { color: var(--text-subtle); font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+	.archive-year a { color: var(--text); font-size: 0.94rem; text-decoration: none; }
+	.archive-year a:hover { color: var(--accent); }
+	@media (max-width: 640px) { .archive-year { grid-template-columns: 1fr; gap: 1rem; } .archive-year li { grid-template-columns: 4.5rem 1fr; } .archive-year li > span { display: none; } }
+</style>

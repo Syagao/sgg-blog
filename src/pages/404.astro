@@ -1,0 +1,21 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout title="页面未找到" description="你访问的页面不存在或已经移动。">
+	<div class="not-found">
+		<p class="error-code">404</p>
+		<h1>这里没有找到内容。</h1>
+		<p>链接可能已经失效，也可能只是路径里多了一个字符。</p>
+		<a href="/">返回首页</a>
+	</div>
+</PageLayout>
+
+<style>
+	.not-found { width: min(100% - 2.5rem, var(--content-width)); margin: 0 auto; padding: 8rem 0; text-align: center; }
+	.error-code { margin: 0; color: var(--accent); font: 650 0.8rem var(--font-mono); letter-spacing: 0.15em; }
+	.not-found h1 { margin: 0.75rem 0; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: -0.04em; }
+	.not-found > p:not(.error-code) { margin: 0 0 2rem; color: var(--text-muted); }
+	.not-found a { display: inline-block; padding: 0.55rem 1rem; border: 1px solid var(--border-strong); border-radius: 0.35rem; color: var(--text); font-size: 0.88rem; text-decoration: none; }
+	.not-found a:hover { border-color: var(--accent); color: var(--accent); }
+</style>

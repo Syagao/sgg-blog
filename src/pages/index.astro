@@ -1,49 +1,38 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import PostList from '../components/PostList.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import PageLayout from '../layouts/PageLayout.astro';
+import { getPublishedPosts } from '../utils/blog';
+
+const posts = await getPublishedPosts();
+const latestPosts = posts.slice(0, 6);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<PageLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<div class="page-container home-page">
+		<section class="intro" aria-labelledby="intro-title">
+			<p class="page-eyebrow">Robotics · Control · Engineering</p>
+			<h1 id="intro-title">你好，我是沈高高。</h1>
+			<p>{SITE_DESCRIPTION}</p>
+		</section>
+
+		<section class="latest" aria-labelledby="latest-title">
+			<div class="section-heading">
+				<h2 id="latest-title">最新文章</h2>
+				<a href="/blog/">查看全部 <span aria-hidden="true">→</span></a>
+			</div>
+			<PostList posts={latestPosts} />
+		</section>
+	</div>
+</PageLayout>
+
+<style>
+	.home-page { padding-top: clamp(4.5rem, 11vw, 8.5rem); }
+	.intro { max-width: 44rem; padding-bottom: clamp(4.5rem, 10vw, 7.5rem); }
+	.intro h1 { margin: 0; font-size: clamp(2.45rem, 7vw, 4.6rem); font-weight: 720; letter-spacing: -0.055em; line-height: 1.12; }
+	.intro > p:last-child { max-width: 38rem; margin: 1.5rem 0 0; color: var(--text-muted); font-size: clamp(1.02rem, 2.2vw, 1.18rem); line-height: 1.9; }
+	.section-heading { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.2rem; }
+	.section-heading h2 { margin: 0; font-size: 1rem; font-weight: 650; letter-spacing: 0.03em; }
+	.section-heading a { color: var(--text-subtle); font-size: 0.78rem; text-decoration: none; }
+	.section-heading a:hover { color: var(--accent); }
+</style>

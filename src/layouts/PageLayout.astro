@@ -1,0 +1,30 @@
+---
+import type { ImageMetadata } from 'astro';
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: ImageMetadata;
+	type?: 'website' | 'article';
+	mainClass?: string;
+}
+
+const { title, description, image, type = 'website', mainClass } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={title} description={description} image={image} type={type} />
+		<slot name="head" />
+	</head>
+	<body>
+		<a class="skip-link" href="#main-content">跳到主要内容</a>
+		<Header />
+		<main id="main-content" class={mainClass} tabindex="-1"><slot /></main>
+		<Footer />
+	</body>
+</html>

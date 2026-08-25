@@ -1,20 +1,36 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { type CollectionEntry, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { getPublishedPosts, getReadingTime } from '../../utils/blog';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
+	const posts = await getPublishedPosts();
+	return posts.map((post, index) => ({
 		params: { slug: post.id },
-		props: post,
+		props: {
+			post,
+			previousPost: posts[index + 1] ? { id: posts[index + 1].id, title: posts[index + 1].data.title } : undefined,
+			nextPost: posts[index - 1] ? { id: posts[index - 1].id, title: posts[index - 1].data.title } : undefined,
+		},
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
-const { Content } = await render(post);
+interface Props {
+	post: CollectionEntry<'blog'>;
+	previousPost?: { id: string; title: string };
+	nextPost?: { id: string; title: string };
+}
+
+const { post, previousPost, nextPost } = Astro.props;
+const { Content, headings } = await render(post);
 ---
 
-<BlogPost {...post.data}>
+<BlogPost
+	{...post.data}
+	headings={headings}
+	readingTime={getReadingTime(post.body)}
+	{previousPost}
+	{nextPost}
+>
 	<Content />
 </BlogPost>

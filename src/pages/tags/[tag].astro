@@ -1,0 +1,25 @@
+---
+import PostList from '../../components/PostList.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getPublishedPosts } from '../../utils/blog';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+	const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+	return tags.map((tag) => ({ params: { tag }, props: { tag } }));
+}
+
+const { tag } = Astro.props;
+const posts = (await getPublishedPosts()).filter((post) => post.data.tags.includes(tag));
+---
+
+<PageLayout title={`标签：${tag}`} description={`沈高高博客中关于“${tag}”的文章。`}>
+	<div class="page-container">
+		<header class="page-header">
+			<p class="page-eyebrow">Tag</p>
+			<h1 class="page-title">#{tag}</h1>
+			<p class="page-description">这个标签下共有 {posts.length} 篇文章。</p>
+		</header>
+		<PostList posts={posts} emptyText="这个标签下还没有公开文章。" />
+	</div>
+</PageLayout>
