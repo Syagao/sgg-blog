@@ -8,6 +8,13 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Project Knowledge
+
+- Read `docs/INDEX.md` before making project-specific changes.
+- Use the documents linked from that index as the source of truth for the current architecture, content model, confirmed decisions, and project status.
+- Keep confirmed decisions separate from proposals. Update the relevant knowledge document when implementation changes the documented behavior or structure.
+- Do not treat placeholder copy, placeholder assets, or items marked "待确认" as approved product requirements.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

@@ -1,50 +1,204 @@
 ---
-import FormattedDate from '../components/FormattedDate.astro';
 import PageLayout from '../layouts/PageLayout.astro';
-import { getPublishedPosts, getReadingTime } from '../utils/blog';
+import { formatDate, getPublishedPosts, getTagHref } from '../utils/blog';
 
 const posts = await getPublishedPosts();
-const postsByYear = posts.reduce<Record<string, typeof posts>>((groups, post) => {
+const postsByYear = new Map<string, typeof posts>();
+
+for (const post of posts) {
 	const year = String(post.data.pubDate.getFullYear());
-	(groups[year] ??= []).push(post);
-	return groups;
-}, {});
+	const yearPosts = postsByYear.get(year) ?? [];
+	yearPosts.push(post);
+	postsByYear.set(year, yearPosts);
+}
+
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
 ---
 
-<PageLayout title="归档" description="沈高高的博客文章时间归档。">
-	<div class="page-container">
-		<header class="page-header">
-			<p class="page-eyebrow">Archive</p>
-			<h1 class="page-title">归档</h1>
-			<p class="page-description">共 {posts.length} 篇文章，按发布时间整理。</p>
+<PageLayout title="归档" description="沈高高的博客文章时间归档与标签索引。">
+	<div class="archive-page">
+		<header class="archive-header">
+			<h1>归档</h1>
 		</header>
 
-		<div class="archive-list">
-			{Object.entries(postsByYear).map(([year, yearPosts]) => (
-				<section class="archive-year" aria-labelledby={`year-${year}`}>
-					<h2 id={`year-${year}`}>{year}</h2>
+		<div class="archive-layout">
+			<div class="archive-list">
+				{posts.length > 0 ? (
+					[...postsByYear].map(([year, yearPosts]) => (
+						<section class="archive-year" aria-labelledby={`year-${year}`}>
+							<h2 id={`year-${year}`}>{year}</h2>
+							<ul>
+								{yearPosts.map((post) => (
+									<li>
+										<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+										<a href={`/blog/${post.id}/`} class="archive-title">{post.data.title}</a>
+									</li>
+								))}
+							</ul>
+						</section>
+					))
+				) : (
+					<p class="empty-state">暂时还没有文章。</p>
+				)}
+			</div>
+
+			{tags.length > 0 && (
+				<aside class="tag-index" aria-label="标签索引">
+					<h2>
+						<svg viewBox="0 0 24 24" aria-hidden="true">
+							<path d="M20.6 13.6 13.7 20.5a2.1 2.1 0 0 1-3 0L3.5 13.3a2.1 2.1 0 0 1-.6-1.5V5a2 2 0 0 1 2-2h6.8a2.1 2.1 0 0 1 1.5.6l7.4 7a2.1 2.1 0 0 1 0 3Z" />
+							<circle cx="7.5" cy="7.5" r="1.25" />
+						</svg>
+						<span>Tags</span>
+					</h2>
 					<ul>
-						{yearPosts.map((post) => (
-							<li>
-								<div class="archive-date"><FormattedDate date={post.data.pubDate} showYear={false} /></div>
-								<a href={`/blog/${post.id}/`}>{post.data.title}</a>
-								<span>{getReadingTime(post.body)} 分钟</span>
-							</li>
+						{tags.map((tag) => (
+							<li><a href={getTagHref(tag)}>{tag}</a></li>
 						))}
 					</ul>
-				</section>
-			))}
+				</aside>
+			)}
 		</div>
 	</div>
 </PageLayout>
 
 <style>
-	.archive-year { display: grid; grid-template-columns: 5rem 1fr; gap: 2rem; padding: 2rem 0 3rem; border-top: 1px solid var(--border); }
-	.archive-year h2 { margin: 0; font-size: 1.35rem; font-variant-numeric: tabular-nums; }
-	.archive-year ul { margin: 0; padding: 0; list-style: none; }
-	.archive-year li { display: grid; grid-template-columns: 5.5rem 1fr auto; gap: 1rem; align-items: baseline; padding: 0.65rem 0; }
-	.archive-date, .archive-year li > span { color: var(--text-subtle); font-size: 0.76rem; font-variant-numeric: tabular-nums; }
-	.archive-year a { color: var(--text); font-size: 0.94rem; text-decoration: none; }
-	.archive-year a:hover { color: var(--accent); }
-	@media (max-width: 640px) { .archive-year { grid-template-columns: 1fr; gap: 1rem; } .archive-year li { grid-template-columns: 4.5rem 1fr; } .archive-year li > span { display: none; } }
+	.archive-page {
+		width: min(100% - 2.5rem, var(--site-width));
+		margin-inline: auto;
+		padding-top: clamp(4.5rem, 9vw, 7.5rem);
+	}
+
+	.archive-header { margin-bottom: 2.8rem; }
+
+	.archive-header h1 {
+		margin: 0;
+		font-size: 2.25rem;
+		font-weight: 600;
+		letter-spacing: -0.025em;
+		line-height: 1.25;
+	}
+
+	.archive-layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 15rem;
+		gap: clamp(3.5rem, 7vw, 6.5rem);
+		align-items: start;
+	}
+
+	.archive-year + .archive-year { margin-top: 3.2rem; }
+
+	.archive-year h2,
+	.tag-index h2 {
+		margin: 0 0 1.55rem;
+		color: var(--text);
+		font-size: 1.42rem;
+		font-weight: 600;
+		line-height: 1.35;
+	}
+
+	.archive-year h2 { font-variant-numeric: tabular-nums; }
+
+	.archive-year ul,
+	.tag-index ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.archive-year li {
+		display: grid;
+		grid-template-columns: 9.2rem minmax(0, 1fr);
+		gap: 1.2rem;
+		align-items: baseline;
+		padding: 0.62rem 0;
+	}
+
+	.archive-year time {
+		color: var(--text-muted);
+		font-family: var(--font-sans);
+		font-size: 1rem;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.archive-title {
+		color: var(--text);
+		font-size: 1.04rem;
+		line-height: 1.7;
+		text-decoration-line: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.2em;
+		transition: color 160ms ease, text-decoration-color 160ms ease;
+	}
+
+	.archive-title:hover,
+	.archive-title:focus-visible {
+		color: var(--nav-active);
+		text-decoration-color: var(--nav-active);
+	}
+
+	.tag-index h2 {
+		display: flex;
+		align-items: center;
+		gap: 0.55rem;
+	}
+
+	.tag-index h2 svg {
+		width: 1.35rem;
+		height: 1.35rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-width: 1.8;
+	}
+
+	.tag-index ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.55rem;
+	}
+
+	.tag-index a {
+		display: block;
+		padding: 0.22rem 0.62rem;
+		border: 1px solid color-mix(in srgb, var(--nav-active) 28%, var(--border));
+		border-radius: 0.45rem;
+		background: color-mix(in srgb, var(--nav-active) 3%, var(--background));
+		color: var(--text);
+		font-size: 0.92rem;
+		line-height: 1.5;
+		text-decoration: none;
+		transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+	}
+
+	.tag-index a:hover,
+	.tag-index a:focus-visible {
+		border-color: var(--nav-active);
+		background: color-mix(in srgb, var(--nav-active) 8%, var(--background));
+		color: var(--nav-active);
+	}
+
+	.empty-state { margin: 0; color: var(--text-muted); }
+
+	@media (max-width: 860px) {
+		.archive-layout { grid-template-columns: 1fr; gap: 3.5rem; }
+		.tag-index { max-width: 32rem; }
+	}
+
+	@media (max-width: 640px) {
+		.archive-page {
+			width: min(100% - 1.5rem, var(--site-width));
+			padding-top: 3.5rem;
+		}
+
+		.archive-header { margin-bottom: 2.2rem; }
+		.archive-header h1 { font-size: 2rem; }
+		.archive-year + .archive-year { margin-top: 2.6rem; }
+		.archive-year h2, .tag-index h2 { margin-bottom: 1.15rem; font-size: 1.3rem; }
+		.archive-year li { grid-template-columns: 1fr; gap: 0.12rem; padding: 0.68rem 0; }
+		.archive-year time { font-size: 0.88rem; }
+		.archive-title { font-size: 1rem; }
+	}
 </style>

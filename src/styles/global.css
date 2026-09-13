@@ -1,3 +1,9 @@
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import 'lxgw-wenkai-screen-webfont/lxgwwenkaiscreen.css';
+
 :root {
 	--background: #f7f7f5;
 	--surface: #ffffff;
@@ -9,6 +15,7 @@
 	--border-strong: #c6c9cc;
 	--accent: #54789b;
 	--accent-strong: #315f88;
+	--nav-active: #d52a42;
 	--blue-soft: #eef4f8;
 	--blue-border: #bfd0dd;
 	--green-soft: #eff6f1;
@@ -22,7 +29,7 @@
 	--selection: #d6e3ed;
 	--site-width: 1120px;
 	--content-width: 780px;
-	--font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+	--font-sans: Inter, "LXGW WenKai Screen", "STFangsong", "FangSong", serif;
 	--font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
@@ -37,6 +44,7 @@
 	--border-strong: #444a52;
 	--accent: #82a5c4;
 	--accent-strong: #a9c4db;
+	--nav-active: #f06478;
 	--blue-soft: #1c2a35;
 	--blue-border: #36516a;
 	--green-soft: #1e2c24;

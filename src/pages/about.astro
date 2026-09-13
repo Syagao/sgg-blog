@@ -1,46 +1,36 @@
 ---
-import { GITHUB_URL } from '../consts';
 import PageLayout from '../layouts/PageLayout.astro';
 ---
 
 <PageLayout title="关于" description="关于沈高高和这个博客。">
 	<div class="page-container about-page">
 		<header class="page-header">
-			<p class="page-eyebrow">About</p>
 			<h1 class="page-title">关于我</h1>
 		</header>
 
 		<div class="about-content">
-			<section>
-				<h2>你好，我是沈高高。</h2>
-				<p>我是一名机器人算法工程师。这里可以补充你的教育经历、工作方向，以及你如何开始接触机器人和控制系统。</p>
-			</section>
-			<section>
-				<h2>关注方向</h2>
-				<ul>
-					<li>多机器人调度、任务规划与工程落地</li>
-					<li>运动控制、轨迹规划与系统辨识</li>
-					<li>现代 C++、Python 与机器人软件工程</li>
-					<li>持续学习、工作复盘和生活记录</li>
-				</ul>
-			</section>
-			<section>
-				<h2>为什么写这个博客</h2>
-				<p>这个博客用于沉淀那些容易在项目结束后消失的经验：问题的来龙去脉、失败过的方案、最终的取舍，以及仍未解决的疑问。</p>
-			</section>
-			<section>
-				<h2>找到我</h2>
-				<p><a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub ↗</a>（请在 <code>src/consts.ts</code> 中替换为你的真实地址。）</p>
-			</section>
+			<p>一个在武汉工作的普通机器人工程师，主要从事运动控制相关的工作。</p>
+			<p>我一直觉得，学会一件事和真正掌握它之间，还隔着一次清楚的表达。只有把它记录下来，先对自己讲明白，再试着讲给别人听，才算真正理解了它。</p>
+			<p>所以我开始写这个博客。这里会记录学习和工作中踩过的坑、解决问题的过程，以及自己对一些技术问题的理解。它们未必都是标准答案，我也不是什么技术大牛，只是想把亲手做过、认真思考过的事情留下来。</p>
+			<p>一路学习到现在，我曾从互联网上许多陌生人的经验分享中得到帮助。那些记录让我少走了不少弯路，也帮我解决过许多具体的问题。</p>
+			<p>希望我写下的这些内容，有一天也能为遇到相似问题的人提供一点参考。如果其中某篇文章恰好对你有用，那这件事就很值得了。</p>
 		</div>
 	</div>
 </PageLayout>
 
 <style>
+	.about-page .page-title {
+		font-size: 2.25rem;
+		font-weight: 600;
+	}
+
 	.about-content { max-width: 42rem; }
-	.about-content section { padding: 2rem 0; border-top: 1px solid var(--border); }
-	.about-content h2 { margin: 0 0 0.85rem; font-size: 1.25rem; }
-	.about-content p, .about-content ul { margin: 0; color: var(--text-muted); line-height: 1.95; }
-	.about-content ul { padding-left: 1.25rem; }
-	.about-content code { padding: 0.12em 0.32em; border-radius: 0.25rem; background: var(--surface-subtle); font-family: var(--font-mono); font-size: 0.85em; }
+	.about-content p {
+		margin: 0;
+		color: var(--text);
+		font-size: 17px;
+		font-weight: 400;
+		line-height: 1.85;
+	}
+	.about-content p + p { margin-top: 1.5rem; }
 </style>
